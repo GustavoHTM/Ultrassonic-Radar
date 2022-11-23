@@ -1,0 +1,148 @@
+import processing.serial.*;
+import java.awt.event.KeyEvent;
+import java.io.IOException;
+
+Serial myPort;
+String Pos="";
+String Angulo="";
+String Distancia="";
+String data="";
+String Inimigos;
+float pixsDistance;
+int iAngulo, iDistancia, iPos, iInimigos;
+int index1=0;
+int index2=0;
+int index3=0;
+int index4=0;
+int index5=0;
+int index6=0;
+
+PFont fontradar;
+
+
+void setup(){  
+  myPort = new Serial(this, "COM6", 9600);
+  myPort.bufferUntil('.');
+  smooth();
+  size(1366,768);
+  fontradar = loadFont("OCRAExtended-48.vlw");
+}
+
+void serialEvent (Serial myPort){
+  data = myPort.readStringUntil('.');
+  data = data.substring(0,data.length()-1);
+  index1 = data.indexOf(";"); 
+  index3 = data.indexOf("/");
+  index5 = data.indexOf(",");
+  Pos = data.substring(0, index1);
+  Inimigos = data.substring(index1+1, index3); 
+  Distancia = data.substring(index3+1, index5);
+  Angulo = data.substring(index5+1,data.length());
+  iInimigos = int(Inimigos);
+  iAngulo = int(Angulo);
+  iDistancia = int(Distancia);
+  iPos = int(Pos);
+}
+
+void draw(){  
+  noStroke();
+  fill(0,4); 
+  rect(0, 0, 1366, 768-768*0.22);
+  noFill();
+
+  translate(688,600);
+  fill(0);
+  rect(-688,0,1366,768*0.22);
+  noFill();
+  strokeWeight(2);
+  stroke(98,245,31);
+  arc(0,0,1000,1000,7*TWO_PI/12,TWO_PI);
+  line(0,0,520,0);
+  line(0,0,-520*cos(radians(30)),-520*sin(radians(30)));
+  line(0,0,-520*cos(radians(60)),-520*sin(radians(60)));
+  line(0,0,-520*cos(radians(90)),-520*sin(radians(90)));
+  line(0,0,-520*cos(radians(120)),-520*sin(radians(120)));
+  line(0,0,-520*cos(radians(150)),-520*sin(radians(150)));
+  arc(0,0,700,700,7*TWO_PI/12,TWO_PI);
+  arc(0,0,400,400,7*TWO_PI/12,TWO_PI);
+  strokeWeight(0.1);
+  stroke(60,155,31);
+  arc(0,0,950,950,7*TWO_PI/12,TWO_PI);
+  arc(0,0,900,900,7*TWO_PI/12,TWO_PI);
+  arc(0,0,850,850,7*TWO_PI/12,TWO_PI);
+  arc(0,0,800,800,7*TWO_PI/12,TWO_PI);
+  arc(0,0,750,750,7*TWO_PI/12,TWO_PI);
+  
+  arc(0,0,650,650,7*TWO_PI/12,TWO_PI);
+  arc(0,0,600,600,7*TWO_PI/12,TWO_PI);
+  arc(0,0,550,550,7*TWO_PI/12,TWO_PI);
+  arc(0,0,500,500,7*TWO_PI/12,TWO_PI);
+  arc(0,0,450,450,7*TWO_PI/12,TWO_PI);
+  
+  arc(0,0,350,350,7*TWO_PI/12,TWO_PI);
+  arc(0,0,300,300,7*TWO_PI/12,TWO_PI);
+  arc(0,0,250,250,7*TWO_PI/12,TWO_PI);
+  arc(0,0,200,200,7*TWO_PI/12,TWO_PI);
+  arc(0,0,150,150,7*TWO_PI/12,TWO_PI);
+  arc(0,0,100,100,7*TWO_PI/12,TWO_PI);
+  arc(0,0,50,50,7*TWO_PI/12,TWO_PI);
+  
+  resetMatrix();
+  textFont(fontradar);
+  textSize(25);
+  fill(98,245,31);
+  translate(688,600);
+  rotate(radians(60));
+  text("30°",-17,-530);
+  resetMatrix();
+  
+  translate(688,600);
+  rotate(radians(30));
+  text("60°",-17,-530);
+  resetMatrix();
+
+  translate(688,600);
+  text("90°",-17,-530);
+  resetMatrix();
+  
+  translate(688,600);
+  rotate(-radians(30));
+  text("120°",-24,-530);
+  resetMatrix();
+  
+  translate(688,600);
+  rotate(-radians(60));
+  text("150°",-24,-530);
+  resetMatrix();
+  
+  translate(688,600);
+  rotate(radians(90));
+  text("0°",-13,-530);
+  resetMatrix();
+  
+  
+  
+  textSize(25);
+  translate(688,600);
+  text("Enemies: ", -420,50);
+  text("Angle: ", 300,50);
+  text("Distance: ", -60,50);
+  text("            " + iDistancia + " cm", -60,50);
+  text("         " + iAngulo + "°",300,50);
+  text("            " + iInimigos, -420,50);
+  
+  strokeWeight(4);
+  stroke(52, 139, 207);  
+  line(0,0,500*cos(radians(iPos)),-500*sin(radians(iPos)));
+
+
+  
+  fill(255,14,14);
+  stroke(255,14,14);
+  pixsDistance = iDistancia*((600-600*0.1666)*0.025); // covers the distance from the sensor from cm to pixels
+  // limiting the range to 40 cms
+  if(iDistancia<40){
+    // draws the object according to the angle and the distance
+  arc(50/6*iDistancia*cos(radians(iAngulo)),-(50/6*iDistancia)*sin(radians(iAngulo)),10,10,0,TWO_PI);
+  }
+}
