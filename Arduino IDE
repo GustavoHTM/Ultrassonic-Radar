@@ -1,0 +1,119 @@
+#include <Servo.h>
+
+const int trigPin = 5;
+const int echoPin = 6;
+const int led = 12;
+long duracao, distancia;
+int inidis;
+int pos = 0;
+Servo servo_9;
+int angulo = 0;
+int angini1;
+int angini2;
+int inimigos;
+int inimigo;
+
+
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  servo_9.attach(9, 500, 2500);
+}
+
+
+void loop() {
+  for (pos = 0; pos <= 150; pos += 1) {
+    digitalWrite(trigPin, LOW);
+    delayMicroseconds(2);
+    digitalWrite(trigPin, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(trigPin, LOW);
+    duracao = pulseIn(echoPin, HIGH);
+    distancia = (duracao / 2) / 29.1;
+    servo_9.write(pos);
+    delay(1);
+
+    if (distancia > 40) {
+      inimigo = 0;
+    }
+    else {
+      inimigo = 1;
+    }
+    if ((inimigo == 1) && (angini1 == 0)) {
+      angini1 = pos;
+      inidis  = distancia;
+    }
+    if ((inimigo == 1) && (pos > (angini1 + 10)) && (angini1 != 0)) {
+      angini2 = pos;
+      angulo = ((angini1 + angini2) / 2);
+      angini1 = 0;
+      inimigos = inimigos + 1;
+    }
+    if ((inimigo == 0) && (angini1 != 0)) {
+      angini2 = pos;
+      angulo = ((angini1 + angini2) / 2);
+      angini1 = 0;
+      inimigos = inimigos + 1;
+    }
+    Serial.print(pos);
+    Serial.print(";");
+    Serial.print(inimigos);
+    Serial.print("/");
+    Serial.print(inidis);
+    Serial.print(",");
+    Serial.print(angulo);
+    Serial.print(".");
+    delay(3);
+    
+  }
+  for (pos = 150; pos >= 0; pos -= 1) {
+    digitalWrite(trigPin, LOW);
+    delayMicroseconds(2);
+    digitalWrite(trigPin, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(trigPin, LOW);
+    duracao = pulseIn(echoPin, HIGH);
+    distancia = (duracao / 2) / 29.1;
+    servo_9.write(pos);
+    delay(1);
+    if (distancia > 40) {
+      inimigo = 0;
+    }
+    else {
+      inimigo = 1;
+    }
+    if ((inimigo == 1) && (angini1 == 0)) {
+      angini1 = pos;
+      inidis  = distancia;
+    }
+    if ((inimigo == 1) && (pos < (angini1 - 10)) && (angini1 != 0)) {
+      angini2 = pos;
+      angulo = ((angini1 + angini2) / 2);
+      angini1 = 0;
+      inimigos = inimigos + 1;
+    }
+    if ((inimigo == 0) && (angini1 != 0)) {
+      angini2 = pos;
+      angulo = ((angini1 + angini2) / 2);
+      angini1 = 0;
+      inimigos = inimigos + 1;
+    }
+    Serial.print(pos);
+    Serial.print(";");
+    Serial.print(inimigos);
+    Serial.print("/");
+    Serial.print(inidis);
+    Serial.print(",");
+    Serial.print(angulo);
+    Serial.print(".");
+    delay(3);
+  }
+  inimigos = 0;
+  inimigo = 0;
+  angini1 = 0;
+  angini2 = 0;
+  inidis = 0;
+  delay(300);
+}
